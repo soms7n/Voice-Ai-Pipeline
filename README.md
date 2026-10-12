@@ -1,4 +1,4 @@
-# Airtel Device-Recovery Voice AI
+# AI VOICE PIPELINE
 
 A FastAPI application for managing device-recovery calling campaigns using Exotel and a Pipecat voice agent.
 
