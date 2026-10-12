@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Curo Campaign Console</title>
+<style>
+:root{--bg:#0C101D;--p:#131A2D;--p2:#1A2340;--l:rgba(255,255,255,.08);--tx:#E8EBF5;--mu:#8D97B5;--ac:#F0A083;--in:#6B7CF5;--ok:#5FD39A;--bad:#F06B6B;--wa:#F2C45F}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:14px/1.5 Inter,system-ui,"Segoe UI",sans-serif;background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+aside{background:#0A0D18;border-right:1px solid var(--l);padding:20px 14px;position:sticky;top:0;height:100vh}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;padding:0 8px 22px}
+.logo i{width:22px;height:22px;border-radius:50%;border:2px solid var(--ac);box-shadow:inset 0 0 0 4px #0A0D18,inset 0 0 0 11px var(--ac)}
+aside a{display:block;padding:9px 12px;border-radius:9px;color:var(--mu);text-decoration:none;margin-bottom:2px;transition:background .2s,color .2s}
+aside a:hover{background:var(--p);color:#fff}aside a.on{background:var(--p2);color:#fff;box-shadow:inset 2px 0 var(--ac)}
+main{padding:22px 28px 60px;min-width:0}
+.top{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:22px}
+.top h1{font-size:20px;margin-right:auto}.top small{color:var(--mu);display:block;font-weight:400;font-size:12.5px}
+select,input,textarea{background:var(--p);border:1px solid var(--l);border-radius:9px;padding:8px 11px;outline:0;transition:border-color .2s}
+select:focus,input:focus,textarea:focus{border-color:var(--in)}
+textarea{width:100%;min-height:100px;resize:vertical;font-family:ui-monospace,monospace;font-size:12.5px}
+.btn{background:var(--ac);color:#1B1210;border:0;border-radius:9px;padding:9px 16px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px var(--ac)}.btn:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.btn.g{background:var(--p2);color:var(--tx);border:1px solid var(--l)}.btn.s{padding:5px 10px;font-size:12.5px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.kpi,.card{background:var(--p);border:1px solid var(--l);border-radius:14px;padding:16px}
+.kpi span{color:var(--mu);font-size:12px;text-transform:uppercase;letter-spacing:.06em}.kpi b{display:block;font-size:26px;margin-top:2px}.kpi em{font-style:normal;color:var(--mu);font-size:12px}
+.g2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:14px}
+.card h2{font-size:15px;margin-bottom:12px}.card h2 small{color:var(--mu);font-weight:400;margin-left:6px}
+.daily{display:flex;gap:6px;align-items:flex-end;height:170px}
+.daily div{flex:1;text-align:center;font-size:11px;color:var(--mu);display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.daily i{display:block;background:var(--p2);border-radius:5px 5px 0 0;position:relative;margin-bottom:5px;transition:height .6s}
+.daily i b{position:absolute;inset:auto 0 0;background:linear-gradient(var(--in),var(--ac));border-radius:5px 5px 0 0}
+.hb{display:grid;grid-template-columns:130px 1fr 80px;gap:10px;align-items:center;margin-bottom:9px;font-size:13px}
+.hb i{height:8px;background:var(--p2);border-radius:9px;overflow:hidden}.hb b{display:block;height:100%;background:linear-gradient(90deg,var(--in),var(--ac));border-radius:9px;transition:width .6s}
+.hb em{font-style:normal;color:var(--mu);text-align:right;font-size:12px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--l);white-space:nowrap}
+th{color:var(--mu);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.05em}th[data-a]{cursor:pointer}th[data-a]:hover{color:#fff}
+tbody tr[data-a]{cursor:pointer}tbody tr:hover{background:rgba(255,255,255,.03)}
+.chip{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;background:var(--p2)}
+.c-Pickup{background:rgba(95,211,154,.15);color:var(--ok)}.c-Callback{background:rgba(242,196,95,.15);color:var(--wa)}.c-Not,.c-Wrong{background:rgba(240,107,107,.14);color:var(--bad)}.c-Pending{background:rgba(107,124,245,.18);color:#AAB3FF}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}.bar input{min-width:200px}
+.pg{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:12px;color:var(--mu)}
+#drawer{position:fixed;top:0;right:0;width:min(470px,100%);height:100%;background:#10162A;border-left:1px solid var(--l);transform:translateX(100%);transition:transform .35s cubic-bezier(.16,1,.3,1);z-index:40;padding:22px;overflow:auto}
+#drawer.open{transform:none;box-shadow:-30px 0 60px rgba(0,0,0,.5)}
+.tr p{margin:8px 0;padding:9px 12px;border-radius:11px;background:var(--p);max-width:92%}.tr p.C{margin-left:auto;background:var(--p2)}.tr small{display:block;color:var(--mu);font-size:11px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}.kv span{color:var(--mu);font-size:12px;display:block}
+.prog{height:6px;background:var(--p2);border-radius:9px;overflow:hidden;margin-top:12px}.prog b{display:block;height:100%;width:0;background:var(--ac);transition:width .2s}
+.tag{display:inline-block;font-size:11.5px;color:var(--wa);border:1px solid rgba(242,196,95,.4);border-radius:99px;padding:1px 9px;margin-left:8px;vertical-align:middle}
+#toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,30px);background:#fff;color:#111;padding:10px 18px;border-radius:99px;opacity:0;transition:.35s;z-index:60;pointer-events:none;font-weight:500}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}.fg label{display:grid;gap:5px;color:var(--mu);font-size:12.5px}
+@media(max-width:860px){.app{grid-template-columns:1fr}aside{position:static;height:auto;display:flex;overflow-x:auto;padding:10px;gap:4px}.logo{padding:0 10px 0 4px}aside a{white-space:nowrap}main{padding:16px}.g2{grid-template-columns:1fr}.hb{grid-template-columns:100px 1fr 64px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside><div class="logo"><i></i>Curo</div>
+<a href="#overview">Overview</a><a href="#leads">Leads &amp; runs</a><a href="#calls">Call log</a><a href="#insights">Insights</a><a href="#pickups">Pickups</a><a href="#reports">Reports</a><a href="#settings">Settings</a></aside>
+<main>
+<div class="top"><h1 id="ttl"></h1><select id="fl" aria-label="Lot"></select><select id="fr" aria-label="Date range"><option value="all">All days</option><option value="7">Last 7 days</option><option value="3">Last 3 days</option><option value="1">Today</option></select></div>
+<section id="view"></section>
+</main></div>
+<div id="drawer"></div><div id="toast"></div>
+<script>
+(function(){
+var $=function(q){return document.querySelector(q)},esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+var KEY="curo-console-v1",REG=["Kannada","Telugu","Tamil","Malayalam"],POS=["Pickup scheduled","Callback requested"],CONN=POS.concat(["Not interested","Wrong number"]),RETRY=["No answer","Busy","Voicemail"],OUTS=CONN.concat(RETRY,["Pending"]),PST=["Scheduled","Completed","Rescheduled","Failed"];
+var GREET={English:"Hello",Hindi:"Namaste",Kannada:"Namaskara",Telugu:"Namaskaram",Tamil:"Vanakkam",Malayalam:"Namaskaram"};
+var D={recs:[],snaps:[],S:{start:9,end:19,retries:2,rate:4.45},dnd:[]},F={lot:"all",range:"all"},L={q:"",o:"",g:"",s:"",k:"date",d:-1,p:0},IMP=null,running=false,speaking=false;
+function iso(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function shift(s,n){var d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);return iso(d)}
+function today(){return iso(new Date())}
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var FN="Aarav Vihaan Rohan Sneha Priya Kiran Ananya Ravi Meera Karthik Divya Suresh Lakshmi Arjun Pooja Manoj Deepa Nikhil Shalini Rahul".split(" "),LN="Sharma Reddy Nair Iyer Rao Patil Gowda Kumar Singh Menon Shetty Naidu Pillai Joshi Das".split(" ");
+function pick(a,r){return a[Math.floor(r()*a.length)]}
+function decide(lang,r){var reg=REG.indexOf(lang)>-1;
+ if(r()<(reg?.42:.34)){var p=reg?.45:.15,u=r();if(u<p*.6)return"Pickup scheduled";if(u<p)return"Callback requested";return r()<.7?"Not interested":"Wrong number"}
+ var v=r();return v<.6?"No answer":v<.85?"Busy":"Voicemail"}
+function setPick(x,r){x.pickup=x.outcome=="Pickup scheduled"?{status:x.pickup&&x.pickup.status||PST[r&&r()<.5?Math.floor(r()*4):0],date:x.pickup&&x.pickup.date||shift(x.date,1+Math.floor((r||Math.random)()*5))}:null}
+function seed(){var r=rng(11),n=0,out=[];
+ [["Lot 1",400,["Maharashtra","Gujarat","Delhi NCR","Uttar Pradesh"]],["Lot 2",300,["Maharashtra","Gujarat","Delhi NCR","Uttar Pradesh"]],["Lot 3",700,["Karnataka","Telangana"]]].forEach(function(l){
+  for(var i=0;i<l[1];i++){var u=r(),lang=u<.48?"English":u<.94?"Hindi":pick(REG,r),x={id:"L"+(1000+n++),name:pick(FN,r)+" "+pick(LN,r),phone:String(6+Math.floor(r()*4))+String(Math.floor(r()*1e9)+1e8).slice(0,9),lot:l[0],state:pick(l[2],r),language:lang,date:shift(today(),-Math.floor(r()*10)),hour:9+Math.floor(r()*10),attempts:1,notes:""};
+   x.outcome=decide(lang,r);x.dur=CONN.indexOf(x.outcome)>-1?8+Math.floor(r()*70):0;setPick(x,r);out.push(x)}});
+ D.recs=out}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
+function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.recs&&s.recs.length){D=s;return}}catch(e){}seed();save()}
+function toast(t){var e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove("on")},2600)}
+function pct(x){return(x*100).toFixed(1)+"%"}function inr(n){return"\u20B9"+Number(n).toLocaleString("en-IN",{maximumFractionDigits:0})}
+function mask(p){return p.slice(0,2)+"\u2022\u2022\u2022\u2022\u2022"+p.slice(-3)}
+function chip(o){return'<span class="chip c-'+o.split(" ")[0]+'">'+esc(o)+"</span>"}
+function rows(){var min=F.range=="all"?"":shift(today(),-(+F.range-1));return D.recs.filter(function(r){return(F.lot=="all"||r.lot==F.lot)&&(!min||r.date>=min)})}
+function K(a){var att=a.filter(function(r){return r.outcome!="Pending"}),con=a.filter(function(r){return CONN.indexOf(r.outcome)>-1}),pos=con.filter(function(r){return POS.indexOf(r.outcome)>-1});
+ return{leads:a.length,att:att.length,con:con.length,cr:att.length?con.length/att.length:0,pk:a.filter(function(r){return r.outcome=="Pickup scheduled"}).length,pi:con.length?pos.length/con.length:0,bill:con.length*D.S.rate}}
+function hb(items){var m=Math.max.apply(null,items.map(function(i){return i.v}).concat([1]));return items.map(function(i){return'<div class="hb"><span>'+esc(i.l)+'</span><i><b style="width:'+(i.v/m*100)+'%"></b></i><em>'+esc(i.t)+"</em></div>"}).join("")}
+function csv(a){return a.map(function(r){return r.map(function(c){c=String(c==null?"":c);return/[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(",")}).join("\n")}
+function dl(name,text){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/csv"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+function callRows(a){return[["ID","Name","Phone","Lot","State","Language","Date","Attempts","Outcome","Duration(s)","Pickup status","Pickup date","Notes"]].concat(a.map(function(r){return[r.id,r.name,r.phone,r.lot,r.state,r.language,r.date,r.attempts,r.outcome,r.dur,r.pickup?r.pickup.status:"",r.pickup?r.pickup.date:"",r.notes]}))}
+function transcript(r){var g=GREET[r.language]||"Hello",f=r.name.split(" ")[0];
+ if(r.outcome=="Pending")return[["System","No call has been placed to this lead yet."]];
+ if(!r.dur)return[["System",r.outcome=="No answer"?"The call rang out with no answer.":r.outcome=="Busy"?"The line was busy.":"The call went to voicemail and no message was left."]];
+ var m={"Pickup scheduled":[["C","Yes, please come and collect it."],["A","Thank you. I have scheduled the pickup for "+(r.pickup?r.pickup.date:"tomorrow")+". You will get an SMS confirmation. Anything else?"],["C","No, that is all."]],
+ "Callback requested":[["C","I am busy right now, please call me later."],["A","Of course, I will call you back tomorrow at a better time."]],
+ "Not interested":[["C","I do not want to return it."],["A","Understood. Thank you for your time, have a good day."]],
+ "Wrong number":[["C","You have the wrong number."],["A","I apologise for the trouble. I will update our records."]]}[r.outcome];
+ return[["A",g+", am I speaking with "+f+"? This is Curo's AI assistant calling on behalf of Airtel about the device pickup on your account."]].concat(m)}
+// ---------- pages ----------
+var P={
+overview:function(){var a=rows(),k=K(a),days=[],n=F.range=="all"?10:Math.min(10,+F.range),mx=1;
+ for(var i=n-1;i>=0;i--){var d=shift(today(),-i),x=a.filter(function(r){return r.date==d&&r.outcome!="Pending"});days.push({d:d,a:x.length,c:x.filter(function(r){return CONN.indexOf(r.outcome)>-1}).length});mx=Math.max(mx,x.length)}
+ var oc=OUTS.map(function(o){var c=a.filter(function(r){return r.outcome==o}).length;return{l:o,v:c,t:c}}),lots=[].concat(new Set(D.recs.map(function(r){return r.lot})));
+ return'<div class="kpis">'+[["Leads",k.leads,""],["Attempted",k.att,pct(k.leads?k.att/k.leads:0)+" of leads"],["Connected",k.con,pct(k.cr)+" connect rate"],["Pickups scheduled",k.pk,""],["Positive intent",pct(k.pi),"pickup or callback"],["Billable",inr(k.bill),inr(D.S.rate)+" per connected call"]].map(function(x){return'<div class="kpi"><span>'+x[0]+"</span><b>"+x[1]+"</b><em>"+x[2]+"&nbsp;</em></div>"}).join("")+"</div>"+
+ '<div class="g2"><div class="card"><h2>Calls per day<small>attempted vs connected</small></h2><div class="daily">'+days.map(function(d){return'<div title="'+d.a+" attempted, "+d.c+' connected"><i style="height:'+(d.a/mx*135)+'px"><b style="height:'+(d.a?d.c/d.a*100:0)+'%"></b></i>'+d.d.slice(5)+"</div>"}).join("")+'</div></div><div class="card"><h2>Outcomes</h2>'+hb(oc)+"</div></div>"+
+ '<div class="card"><h2>By lot</h2><div class="tw"><table><thead><tr><th>Lot</th><th>Leads</th><th>Attempted</th><th>Connected</th><th>Connect rate</th><th>Pickups</th><th>Positive intent</th><th>Billable</th></tr></thead><tbody>'+Array.from(new Set(D.recs.map(function(r){return r.lot}))).map(function(l){var q=K(a.filter(function(r){return r.lot==l}));return"<tr><td>"+esc(l)+"</td><td>"+q.leads+"</td><td>"+q.att+"</td><td>"+q.con+"</td><td>"+pct(q.cr)+"</td><td>"+q.pk+"</td><td>"+pct(q.pi)+"</td><td>"+inr(q.bill)+"</td></tr>"}).join("")+"</tbody></table></div></div>"},
+leads:function(){var pend=D.recs.filter(function(r){return r.outcome=="Pending"||RETRY.indexOf(r.outcome)>-1&&r.attempts<=D.S.retries}).length;
+ return'<div class="g2"><div class="card"><h2>Import leads<small>CSV: phone, name, state, language</small></h2><textarea id="csvin" placeholder="9876543210,Asha Rao,Karnataka,Kannada"></textarea><div class="bar" style="margin:10px 0 0"><input type="file" id="csvf" accept=".csv,.txt"><button class="btn g s" data-a="sample">Load sample CSV</button><button class="btn s" data-a="prev">Validate</button></div><div id="imp"></div></div>'+
+ '<div class="card"><h2>Run campaign</h2><p style="color:var(--mu)">'+pend+' leads are ready: new leads and retries (up to '+D.S.retries+' retries) for no answer, busy and voicemail. Numbers on the do-not-call list are skipped. Calls are simulated in this demo.</p><p style="margin:12px 0;color:var(--mu)">Calling hours: '+D.S.start+":00 to "+D.S.end+':00</p><button class="btn" data-a="run" '+(pend?"":"disabled")+'>Run campaign now</button><div class="prog"><b id="pb"></b></div><p id="pt" style="color:var(--mu);margin-top:8px"></p></div></div>'},
+calls:function(){var o='<option value="">All outcomes</option>'+OUTS.map(function(x){return'<option'+(L.o==x?" selected":"")+">"+x+"</option>"}).join(""),
+ lg=Array.from(new Set(D.recs.map(function(r){return r.language}))),sg=Array.from(new Set(D.recs.map(function(r){return r.state})));
+ return'<div class="bar"><input id="q" placeholder="Search name, phone or ID" value="'+esc(L.q)+'"><select data-c="o">'+o+'</select><select data-c="g"><option value="">All languages</option>'+lg.map(function(x){return'<option'+(L.g==x?" selected":"")+">"+x+"</option>"}).join("")+'</select><select data-c="s"><option value="">All states</option>'+sg.map(function(x){return'<option'+(L.s==x?" selected":"")+">"+x+"</option>"}).join("")+'</select><button class="btn g s" data-a="export">Export CSV</button></div><div class="card"><div id="ct"></div></div>'},
+insights:function(){var a=rows().filter(function(r){return CONN.indexOf(r.outcome)>-1}),grp=function(key){var m={};a.forEach(function(r){(m[r[key]]=m[r[key]]||[]).push(r)});return Object.keys(m).map(function(g){var p=m[g].filter(function(r){return POS.indexOf(r.outcome)>-1}).length;return{l:g,v:p/m[g].length,t:pct(p/m[g].length)+" \u00B7 n="+m[g].length}}).sort(function(x,y){return y.v-x.v})},
+ en=a.filter(function(r){return REG.indexOf(r.language)<0}),rg=a.filter(function(r){return REG.indexOf(r.language)>-1}),pr=function(z){return z.length?z.filter(function(r){return POS.indexOf(r.outcome)>-1}).length/z.length:0},hrs={};
+ a.forEach(function(r){var h=r.hour;hrs[h]=hrs[h]||{c:0,p:0};hrs[h].c++;if(POS.indexOf(r.outcome)>-1)hrs[h].p++});
+ return'<div class="card" style="margin-bottom:14px"><h2>Key finding</h2><p style="font-size:16px">Regional-language calls show <b style="color:var(--ac)">'+pct(pr(rg))+"</b> positive intent against <b>"+pct(pr(en))+"</b> for English and Hindi, from "+rg.length+" regional and "+en.length+" English or Hindi connected calls in the current view.</p></div><div class=\"g2\" style=\"grid-template-columns:1fr 1fr\"><div class=\"card\"><h2>Positive intent by language</h2>"+hb(grp("language"))+'</div><div class="card"><h2>Positive intent by state</h2>'+hb(grp("state"))+'</div></div><div class="card"><h2>Positive intent by hour of day</h2>'+hb(Object.keys(hrs).sort(function(x,y){return x-y}).map(function(h){return{l:h+":00",v:hrs[h].p/hrs[h].c,t:pct(hrs[h].p/hrs[h].c)+" \u00B7 n="+hrs[h].c}}))+"</div>"},
+pickups:function(){var a=rows().filter(function(r){return r.pickup}),c={};PST.forEach(function(s){c[s]=a.filter(function(r){return r.pickup.status==s}).length});var f=L.ps||"";a=a.filter(function(r){return!f||r.pickup.status==f}).sort(function(x,y){return x.pickup.date<y.pickup.date?-1:1}).slice(0,200);
+ return'<div class="bar"><button class="btn s '+(f?"g":"")+'" data-a="pf:">All</button>'+PST.map(function(s){return'<button class="btn s '+(f==s?"":"g")+'" data-a="pf:'+s+'">'+s+" ("+c[s]+")</button>"}).join("")+'</div><div class="card tw"><table><thead><tr><th>ID</th><th>Customer</th><th>Phone</th><th>State</th><th>Pickup date</th><th>Status</th></tr></thead><tbody>'+a.map(function(r){return"<tr><td>"+r.id+"</td><td>"+esc(r.name)+"</td><td>"+mask(r.phone)+"</td><td>"+esc(r.state)+'</td><td><input type="date" value="'+r.pickup.date+'" data-c="pd:'+r.id+'"></td><td><select data-c="ps:'+r.id+'">'+PST.map(function(s){return"<option"+(s==r.pickup.status?" selected":"")+">"+s+"</option>"}).join("")+"</select></td></tr>"}).join("")+"</tbody></table>"+(a.length?"":"<p style='padding:14px;color:var(--mu)'>No pickups in this view.</p>")+"</div>"},
+reports:function(){var k=K(rows());
+ return'<div class="g2" style="grid-template-columns:1fr 1fr"><div class="card"><h2>Lock today\u2019s numbers</h2><p style="color:var(--mu);margin-bottom:12px">Freeze a timestamped snapshot of the current view (lot: '+esc(F.lot)+", range: "+esc(F.range)+') after the full attempt cycle, so everyone works from the same audited figures.</p><p style="margin-bottom:14px">Now: <b>'+k.att+"</b> attempted, <b>"+k.con+"</b> connected, <b>"+k.pk+"</b> pickups.</p><button class=\"btn\" data-a=\"lock\">Lock snapshot</button></div><div class=\"card\"><h2>Full exports</h2><p style=\"color:var(--mu);margin-bottom:12px\">Download every call record in the current view.</p><button class=\"btn g\" data-a=\"export\">Download call log CSV</button></div></div><div class=\"card tw\"><h2>Locked snapshots</h2><table><thead><tr><th>Locked at</th><th>View</th><th>Attempted</th><th>Connected</th><th>Pickups</th><th>Billable</th><th></th></tr></thead><tbody>"+D.snaps.map(function(s){return"<tr><td>"+esc(new Date(s.ts).toLocaleString("en-IN"))+"</td><td>"+esc(s.lot)+" \u00B7 "+esc(s.range)+"</td><td>"+s.k.att+"</td><td>"+s.k.con+"</td><td>"+s.k.pk+"</td><td>"+inr(s.k.bill)+'</td><td><button class="btn g s" data-a="dl:'+s.id+'">Download</button></td></tr>'}).join("")+"</tbody></table>"+(D.snaps.length?"":"<p style='padding:12px;color:var(--mu)'>No snapshots yet.</p>")+"</div>"},
+settings:function(){var S=D.S;return'<div class="card" style="margin-bottom:14px"><h2>Campaign rules</h2><div class="fg"><label>Calling starts (hour)<input type="number" min="0" max="23" value="'+S.start+'" data-c="set:start"></label><label>Calling ends (hour)<input type="number" min="1" max="24" value="'+S.end+'" data-c="set:end"></label><label>Max retries<input type="number" min="0" max="5" value="'+S.retries+'" data-c="set:retries"></label><label>Rate per connected call (\u20B9)<input type="number" step="0.05" min="0" value="'+S.rate+'" data-c="set:rate"></label></div></div><div class="card" style="margin-bottom:14px"><h2>Do-not-call list<small>'+D.dnd.length+' numbers</small></h2><div class="bar"><input id="dndin" placeholder="10-digit mobile number"><button class="btn s" data-a="dnd+">Add</button></div><div>'+D.dnd.map(function(n){return'<span class="chip" style="margin:0 6px 6px 0">'+esc(n)+' <a href="#settings" data-a="dnd-:'+n+'" style="color:var(--bad);text-decoration:none">\u00D7</a></span>'}).join("")+'</div></div><div class="card"><h2>Demo data</h2><p style="color:var(--mu);margin-bottom:12px">All data lives in this browser only. Reset to restore the sample campaign.</p><button class="btn g" data-a="reset">Reset demo data</button></div>'}};
+var T={overview:"Campaign overview",leads:"Leads & runs",calls:"Call log",insights:"Insights",pickups:"Pickups",reports:"Reports",settings:"Settings"};
+function drawCalls(){var q=L.q.toLowerCase(),a=rows().filter(function(r){return(!L.o||r.outcome==L.o)&&(!L.g||r.language==L.g)&&(!L.s||r.state==L.s)&&(!q||(r.name+r.phone+r.id).toLowerCase().indexOf(q)>-1)});
+ a.sort(function(x,y){var u=x[L.k],v=y[L.k];return(u<v?-1:u>v?1:0)*L.d});var pages=Math.max(1,Math.ceil(a.length/15));L.p=Math.min(L.p,pages-1);var h={id:"ID",name:"Customer",lot:"Lot",state:"State",language:"Language",date:"Date",outcome:"Outcome",dur:"Secs"};
+ $("#ct").innerHTML='<div class="tw"><table><thead><tr>'+Object.keys(h).map(function(k){return'<th data-a="sort:'+k+'">'+h[k]+(L.k==k?L.d>0?" \u25B2":" \u25BC":"")+"</th>"}).join("")+"<th>Phone</th></tr></thead><tbody>"+a.slice(L.p*15,L.p*15+15).map(function(r){return'<tr data-a="open:'+r.id+'"><td>'+r.id+"</td><td>"+esc(r.name)+"</td><td>"+esc(r.lot)+"</td><td>"+esc(r.state)+"</td><td>"+esc(r.language)+"</td><td>"+r.date+"</td><td>"+chip(r.outcome)+"</td><td>"+r.dur+"</td><td>"+mask(r.phone)+"</td></tr>"}).join("")+'</tbody></table></div><div class="pg">'+a.length+' calls <button class="btn g s" data-a="pg:-1">Prev</button> '+(L.p+1)+" / "+pages+' <button class="btn g s" data-a="pg:1">Next</button></div>'}
+function render(){var p=(location.hash||"#overview").slice(1);if(!P[p])p="overview";$("#ttl").innerHTML=T[p].replace("&","&amp;")+'<small>Airtel device pickup campaign<span class="tag">sample data</span></small>';
+ var lots=Array.from(new Set(D.recs.map(function(r){return r.lot})));$("#fl").innerHTML='<option value="all">All lots</option>'+lots.map(function(l){return"<option"+(F.lot==l?" selected":"")+">"+esc(l)+"</option>"}).join("");$("#fr").value=F.range;
+ document.querySelectorAll("aside a").forEach(function(a){a.classList.toggle("on",a.getAttribute("href")=="#"+p)});
+ $("#fl").parentNode.querySelectorAll("#fl,#fr").forEach(function(e){e.style.display=p=="leads"||p=="settings"?"none":""});
+ $("#view").innerHTML=P[p]();if(p=="calls")drawCalls()}
+// ---------- import ----------
+function parse(t){var ls=t.split(/\r?\n/).map(function(l){return l.trim()}).filter(Boolean),ix={phone:0,name:1,state:2,language:3};
+ if(ls.length&&/phone|mobile/i.test(ls[0])){var h=ls.shift().split(",").map(function(x){return x.trim().toLowerCase()});["phone","name","state","language"].forEach(function(k,i){var j=h.findIndex(function(x){return x.indexOf(k)>-1||k=="phone"&&x.indexOf("mobile")>-1});ix[k]=j>-1?j:i})}
+ var seen={};D.recs.forEach(function(r){seen[r.phone]=1});return ls.map(function(l){var c=l.split(",").map(function(x){return x.trim()}),ph=(c[ix.phone]||"").replace(/\D/g,"").replace(/^(91|0)(?=\d{10}$)/,"").slice(-10),s="ok";
+  if(!/^[6-9]\d{9}$/.test(ph))s="Invalid number";else if(D.dnd.indexOf(ph)>-1)s="Do not call";else if(seen[ph])s="Duplicate";seen[ph]=1;
+  return{phone:ph,name:c[ix.name]||"Customer",state:c[ix.state]||"Unknown",language:c[ix.language]||"English",st:s}})}
+function prev(){var t=$("#csvin").value;if(!t.trim()){toast("Paste CSV text or choose a file first");return}IMP=parse(t);var ok=IMP.filter(function(r){return r.st=="ok"}).length,lots=Array.from(new Set(D.recs.map(function(r){return r.lot})));
+ $("#imp").innerHTML='<p style="margin:12px 0"><b>'+ok+"</b> valid of "+IMP.length+" rows. "+(IMP.length-ok)+' will be skipped.</p><div class="tw"><table><thead><tr><th>Phone</th><th>Name</th><th>State</th><th>Language</th><th>Check</th></tr></thead><tbody>'+IMP.slice(0,8).map(function(r){return"<tr><td>"+esc(r.phone)+"</td><td>"+esc(r.name)+"</td><td>"+esc(r.state)+"</td><td>"+esc(r.language)+'</td><td style="color:'+(r.st=="ok"?"var(--ok)":"var(--bad)")+'">'+esc(r.st)+"</td></tr>"}).join("")+'</tbody></table></div><div class="bar" style="margin-top:12px"><select id="lotsel">'+lots.map(function(l){return"<option>"+esc(l)+"</option>"}).join("")+'<option value="__new">New lot\u2026</option></select><input id="lotnew" placeholder="New lot name" style="display:none"><button class="btn s" data-a="import" '+(ok?"":"disabled")+">Import "+ok+" leads</button></div>";
+ $("#lotsel").onchange=function(){$("#lotnew").style.display=this.value=="__new"?"":"none"}}
+function doImport(){var v=$("#lotsel").value,lot=v=="__new"?($("#lotnew").value.trim()||"New lot"):v,n=D.recs.length,c=0;
+ IMP.forEach(function(r){if(r.st!="ok")return;D.recs.push({id:"L"+(1000+n++),name:r.name,phone:r.phone,lot:lot,state:r.state,language:r.language,date:today(),hour:0,attempts:0,notes:"",outcome:"Pending",dur:0,pickup:null});c++});
+ IMP=null;save();toast(c+" leads imported into "+lot);render()}
+function run(){if(running)return;var h=new Date().getHours();if((h<D.S.start||h>=D.S.end)&&!confirm("It is outside calling hours ("+D.S.start+":00 to "+D.S.end+":00). Run anyway for this demo?"))return;
+ var q=D.recs.filter(function(r){return D.dnd.indexOf(r.phone)<0&&(r.outcome=="Pending"||RETRY.indexOf(r.outcome)>-1&&r.attempts<=D.S.retries)}).slice(0,600);if(!q.length){toast("Nothing to call right now");return}
+ running=true;var i=0,tot={c:0,p:0};(function step(){for(var j=0;j<30&&i<q.length;j++,i++){var r=q[i];r.attempts++;r.date=today();r.hour=new Date().getHours();r.outcome=decide(r.language,Math.random);r.dur=CONN.indexOf(r.outcome)>-1?8+Math.floor(Math.random()*70):0;if(r.dur)tot.c++;r.pickup=null;if(r.outcome=="Pickup scheduled"){tot.p++;r.pickup={status:"Scheduled",date:shift(today(),1+Math.floor(Math.random()*5))}}}
+  var b=$("#pb");if(b){b.style.width=i/q.length*100+"%";$("#pt").textContent="Calling "+i+" of "+q.length+"\u2026"}
+  if(i<q.length)setTimeout(step,70);else{running=false;save();toast(q.length+" calls placed: "+tot.c+" connected, "+tot.p+" pickups scheduled");render()}})()}
+// ---------- drawer ----------
+function open(id){var r=D.recs.find(function(x){return x.id==id});if(!r)return;var d=$("#drawer");
+ d.innerHTML='<div class="bar" style="justify-content:space-between"><h2>'+esc(r.name)+'</h2><button class="btn g s" data-a="close">Close</button></div><div>'+chip(r.outcome)+'</div><div class="kv"><div><span>Call ID</span>'+r.id+"</div><div><span>Phone</span>"+mask(r.phone)+"</div><div><span>Lot</span>"+esc(r.lot)+"</div><div><span>State</span>"+esc(r.state)+"</div><div><span>Language</span>"+esc(r.language)+"</div><div><span>Attempts</span>"+r.attempts+"</div><div><span>Date</span>"+r.date+"</div><div><span>Duration</span>"+r.dur+' sec</div></div><div class="bar"><select id="ov">'+OUTS.map(function(o){return"<option"+(o==r.outcome?" selected":"")+">"+o+"</option>"}).join("")+'</select><button class="btn s" data-a="save:'+r.id+'">Save outcome</button></div><textarea id="nt" placeholder="Add a note" style="min-height:60px;font-family:inherit;margin-bottom:10px">'+esc(r.notes)+'</textarea><div class="bar"><button class="btn g s" data-a="dnd1:'+r.id+'">Add to do-not-call</button><button class="btn g s" data-a="speak:'+r.id+'">\u25B6 Play transcript</button></div><h3 style="margin:14px 0 6px;font-size:14px">Transcript</h3><div class="tr">'+transcript(r).map(function(t){return'<p class="'+(t[0]=="C"?"C":"")+'"><small>'+({A:"AI agent",C:"Customer",System:"System"}[t[0]])+"</small>"+esc(t[1])+"</p>"}).join("")+"</div>";d.classList.add("open")}
+function closeD(){$("#drawer").classList.remove("open");if(window.speechSynthesis)speechSynthesis.cancel()}
+// ---------- events ----------
+document.addEventListener("click",function(e){var t=e.target.closest("[data-a]");if(!t)return;var a=t.dataset.a.split(":"),v=a.slice(1).join(":"),x;
+ switch(a[0]){
+ case"sort":L.d=L.k==v?-L.d:1;L.k=v;drawCalls();break;
+ case"pg":L.p=Math.max(0,L.p+ +v);drawCalls();break;
+ case"open":open(v);break;case"close":closeD();break;
+ case"export":dl("curo-calls-"+today()+".csv",csv(callRows(rows())));break;
+ case"sample":$("#csvin").value="phone,name,state,language\n9845012345,Asha Rao,Karnataka,Kannada\n9900112233,Imran Khan,Telangana,Telugu\n9731234567,Divya Gowda,Karnataka,English\n9845012345,Asha Rao,Karnataka,Kannada\n12345,Bad Number,Karnataka,Hindi\n8123456789,Suresh Naidu,Telangana,Hindi\n9686001122,Kiran Shetty,Karnataka,Kannada";prev();break;
+ case"prev":prev();break;case"import":doImport();break;case"run":run();break;
+ case"save":x=D.recs.find(function(r){return r.id==v});x.outcome=$("#ov").value;x.notes=$("#nt").value;if(CONN.indexOf(x.outcome)>-1&&!x.dur)x.dur=20;if(x.outcome=="Pending")x.dur=0;setPick(x);save();toast("Outcome saved");open(v);if(location.hash=="#calls")drawCalls();else render();break;
+ case"dnd1":x=D.recs.find(function(r){return r.id==v});if(D.dnd.indexOf(x.phone)<0)D.dnd.push(x.phone);save();toast("Added to do-not-call list");break;
+ case"speak":if(!window.speechSynthesis)return;if(speechSynthesis.speaking){speechSynthesis.cancel();break}x=D.recs.find(function(r){return r.id==v});transcript(x).forEach(function(l,i){var u=new SpeechSynthesisUtterance(l[1]);u.rate=.95;u.pitch=l[0]=="C"?.8:1.05;speechSynthesis.speak(u)});break;
+ case"pf":L.ps=v;render();break;
+ case"lock":var k=K(rows());D.snaps.unshift({id:"S"+Date.now(),ts:Date.now(),lot:F.lot,range:F.range,k:k,rows:callRows(rows())});save();toast("Snapshot locked");render();break;
+ case"dl":x=D.snaps.find(function(s){return s.id==v});dl("curo-snapshot-"+new Date(x.ts).toISOString().slice(0,16).replace(/[:T]/g,"-")+".csv",csv([["Locked at",new Date(x.ts).toLocaleString("en-IN")],["Attempted",x.k.att],["Connected",x.k.con],["Pickups",x.k.pk],["Billable (INR)",x.k.bill.toFixed(2)],[]].concat(x.rows)));break;
+ case"dnd+":x=$("#dndin").value.replace(/\D/g,"").slice(-10);if(!/^[6-9]\d{9}$/.test(x)){toast("Enter a valid 10-digit mobile number");return}if(D.dnd.indexOf(x)<0)D.dnd.push(x);save();render();break;
+ case"dnd-":D.dnd=D.dnd.filter(function(n){return n!=v});save();e.preventDefault();render();break;
+ case"reset":if(confirm("Reset all data to the sample campaign?")){D={recs:[],snaps:[],S:D.S,dnd:[]};seed();save();render();toast("Demo data restored")}break}});
+document.addEventListener("input",function(e){if(e.target.id=="q"){L.q=e.target.value;L.p=0;drawCalls()}});
+document.addEventListener("change",function(e){var t=e.target,c=t.dataset.c;
+ if(t.id=="fl"){F.lot=t.value;render();return}if(t.id=="fr"){F.range=t.value;render();return}
+ if(t.id=="csvf"&&t.files[0]){var f=new FileReader();f.onload=function(){$("#csvin").value=f.result;prev()};f.readAsText(t.files[0]);return}
+ if(!c)return;var p=c.split(":");
+ if("ogs".indexOf(p[0])>-1&&p.length==1){L[p[0]]=t.value;L.p=0;drawCalls()}
+ else if(p[0]=="ps"||p[0]=="pd"){var r=D.recs.find(function(x){return x.id==p[1]});if(p[0]=="ps")r.pickup.status=t.value;else r.pickup.date=t.value;save();toast("Pickup updated")}
+ else if(p[0]=="set"){D.S[p[1]]=+t.value;save();toast("Setting saved")}});
+addEventListener("hashchange",function(){closeD();render()});
+load();render();
+})();
+</script>
+</body>
+</html>

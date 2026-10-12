@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+[project]
+name = "airtel-device-recovery"
+version = "0.1.0"
+description = "Stage 1 foundation for an Airtel device-recovery voice campaign orchestrator."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115,<1.0",
+    "pipecat-ai[cartesia,deepgram,openai,websocket]>=1.3,<2.0",
+    "python-multipart>=0.0.18,<1.0",
+    "uvicorn[standard]>=0.32,<1.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
